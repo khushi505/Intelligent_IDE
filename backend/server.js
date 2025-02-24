@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import generateCode from "./routes/generateCode.js";
 import debugCode from "./routes/debugCode.js";
-// import executeCode from "./routes/executeCode.js";
+import executeCode from "./routes/executeCode.js";
 // import generateTests from "./routes/generateTests.js";
 // import ocr from "./utils/ocr.js";
 
@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use("/api/code", generateCode);
 app.use("/api/code", debugCode);
-// app.use("/execute-code", executeCode);
+app.use("/api/code", executeCode);
 // app.use("/generate-tests", generateTests);
 // app.use("/upload-image", ocr);
 

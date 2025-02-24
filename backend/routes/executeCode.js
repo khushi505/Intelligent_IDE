@@ -1,25 +1,8 @@
-// const express = require("express");
-// const { exec } = require("child_process");
-// const fs = require("fs");
-// const router = express.Router();
+import express from "express";
+import executeCode from "../controllers/executeCode.js";
 
-// router.post("/", (req, res) => {
-//   const { code, language } = req.body;
-//   const filename = `temp.${language === "python" ? "py" : "js"}`;
+const router = express.Router();
 
-//   fs.writeFileSync(filename, code);
+router.post("/execute", executeCode);
 
-//   exec(
-//     language === "python" ? `python ${filename}` : `node ${filename}`,
-//     (error, stdout, stderr) => {
-//       if (error || stderr) {
-//         res.json({ success: false, error: stderr || error.message });
-//       } else {
-//         res.json({ success: true, output: stdout });
-//       }
-//       fs.unlinkSync(filename);
-//     }
-//   );
-// });
-
-// module.exports = router;
+export default router;
