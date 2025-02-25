@@ -103,3 +103,6 @@ Backend runs on http://localhost:5000
 
 ## Demo Preview
 
+https://github.com/user-attachments/assets/4e9d2c23-76a0-4ec1-840e-d32fb258b10d
+
+
