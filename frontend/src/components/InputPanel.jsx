@@ -1,48 +1,90 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-function InputPanel() {
-  const [problem, setProblem] = useState("");
-  const [image, setImage] = useState(null);
+export default function InputPanel({
+  setCode,
+  setExpectedOutput,
+  setLanguage,
+}) {
+  const [input, setInput] = useState("");
+  const [expectedOutput, setLocalExpectedOutput] = useState("");
+  const [language, setLocalLanguage] = useState("javascript"); // Default language
+  const [loading, setLoading] = useState(false);
 
-  const generateCode = async () => {
-    const response = await axios.post("http://localhost:5000/generate-code", {
-      prompt: problem,
-    });
-    console.log("Generated Code:", response.data.code);
-  };
+  const handleGenerateCode = async () => {
+    if (!input.trim()) {
+      alert("Please enter a problem statement!");
+      return;
+    }
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-    setImage(file);
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/code/generate",
+        {
+          prompt: input,
+          language: language, // Send selected language to backend
+        }
+      );
 
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const response = await axios.post(
-      "http://localhost:5000/upload-image",
-      formData
-    );
-    setProblem(response.data.text);
+      setCode(response.data.code);
+    } catch (error) {
+      console.error("Error generating code:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="w-1/4 p-4 bg-gray-100">
-      <textarea
-        className="w-full p-2 border"
-        rows="5"
-        value={problem}
-        onChange={(e) => setProblem(e.target.value)}
-      />
-      <input type="file" className="mt-2" onChange={handleImageUpload} />
-      <button
-        className="w-full p-2 mt-2 bg-blue-500 text-white"
-        onClick={generateCode}
+    <div>
+      {/* Language Selection Dropdown */}
+      <select
+        className="w-full p-2 mb-2 border bg-gray-800 text-white rounded"
+        value={language}
+        onChange={(e) => {
+          setLocalLanguage(e.target.value);
+          setLanguage(e.target.value);
+        }}
       >
-        Generate Code
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+      </select>
+
+      {/* Problem Statement Input */}
+      <textarea
+        className="w-full p-2 bg-gray-800 text-white border rounded"
+        rows="3"
+        placeholder="Enter problem statement..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      ></textarea>
+
+      {/* Expected Output Input */}
+      <textarea
+        className="w-full p-2 bg-gray-800 text-white border rounded mt-2"
+        rows="1"
+        placeholder="Expected Output..."
+        value={expectedOutput}
+        onChange={(e) => setLocalExpectedOutput(e.target.value)}
+      ></textarea>
+
+      {/* Buttons for Setting Expected Output & Generating Code */}
+      <button
+        onClick={() => setExpectedOutput(expectedOutput)}
+        className="bg-blue-500 p-2 rounded mt-2"
+      >
+        Set Expected Output
+      </button>
+
+      <button
+        onClick={handleGenerateCode}
+        className="bg-blue-500 p-2 rounded mt-2 ml-2"
+        disabled={loading}
+      >
+        {loading ? "Generating..." : "Generate Code"}
       </button>
     </div>
   );
 }
-
-export default InputPanel;

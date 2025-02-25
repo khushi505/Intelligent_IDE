@@ -1,19 +1,33 @@
-import React, { useState } from "react";
-import Editor from "@monaco-editor/react";
+import axios from "axios";
 
-function CodeEditor() {
-  const [code, setCode] = useState("");
+export default function CodeEditor({ code, setCode }) {
+  const handleGenerateCode = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/code/generate",
+        { prompt: code }
+      );
+      setCode(response.data.code.replace(/```[a-z]*\n?|```/g, "").trim());
+    } catch (error) {
+      console.error("Error generating code:", error);
+    }
+  };
 
   return (
-    <div className="w-1/2 p-4 bg-gray-200">
-      <Editor
-        height="400px"
-        defaultLanguage="javascript"
+    <div>
+      <textarea
+        className="w-full p-2 bg-gray-800 text-white border rounded"
+        rows="5"
+        placeholder="Write your code here..."
         value={code}
-        onChange={setCode}
-      />
+        onChange={(e) => setCode(e.target.value)}
+      ></textarea>
+      {/* <button
+        onClick={handleGenerateCode}
+        className="bg-blue-500 p-2 rounded mt-2"
+      >
+        Generate Code
+      </button> */}
     </div>
   );
 }
-
-export default CodeEditor;

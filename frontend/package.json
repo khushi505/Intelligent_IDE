@@ -12,6 +12,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@shadcn/ui": "^0.0.4",
+    "@tailwindcss/vite": "^4.0.8",
     "axios": "^1.7.9",
     "monaco-editor": "^0.52.2",
     "react": "^19.0.0",

@@ -1,33 +1,64 @@
-import React, { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 
-function DebuggingPanel() {
-  const [debuggingLogs, setDebuggingLogs] = useState("");
+export default function DebuggingPanel({ code }) {
+  const [debuggedCode, setDebuggedCode] = useState("");
 
-  const debugCode = async () => {
-    const response = await axios.post("http://localhost:5000/debug-code", {
-      code: debuggingLogs,
-    });
-    setDebuggingLogs(response.data.fixedCode);
+  const handleDebugCode = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/code/debug",
+        { code }
+      );
+
+      // Ensure debugged_code is extracted properly
+      const debuggedData = response.data.debugged_code;
+      const formattedDebuggedCode =
+        typeof debuggedData === "object"
+          ? JSON.stringify(debuggedData, null, 2)
+          : debuggedData;
+
+      setDebuggedCode(formattedDebuggedCode);
+    } catch (error) {
+      console.error("Error debugging code:", error);
+    }
+  };
+
+  const formatDebugOutput = (debuggedCode) => {
+    try {
+      const parsedData = JSON.parse(debuggedCode);
+      if (parsedData.parts) {
+        return (
+          <div className="bg-gray-700 p-3 rounded-lg text-white whitespace-pre-wrap">
+            {parsedData.parts.map((part, index) => (
+              <p key={index} className="mb-2">
+                {part.text}
+              </p>
+            ))}
+          </div>
+        );
+      }
+    } catch (error) {
+      return (
+        <div className="bg-gray-700 p-3 rounded-lg text-white whitespace-pre-wrap">
+          {debuggedCode}
+        </div>
+      );
+    }
   };
 
   return (
-    <div className="w-1/4 p-4 bg-gray-100">
-      <h3 className="font-bold">AI Debugging</h3>
-      <textarea
-        className="w-full p-2 border"
-        rows="5"
-        value={debuggingLogs}
-        onChange={(e) => setDebuggingLogs(e.target.value)}
-      />
+    <div className="w-full">
+      <h2 className="text-lg font-bold">Debugged Code</h2>
       <button
-        className="w-full p-2 mt-2 bg-red-500 text-white"
-        onClick={debugCode}
+        onClick={handleDebugCode}
+        className="bg-yellow-500 p-2 rounded mt-2"
       >
-        Fix Code
+        Debug
       </button>
+      <pre className="bg-gray-400 p-2 mt-2 text-white rounded h-40 overflow-auto">
+        {formatDebugOutput(debuggedCode)}
+      </pre>
     </div>
   );
 }
-
-export default DebuggingPanel;

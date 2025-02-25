@@ -1,63 +1,57 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-function TestCases() {
-  const [testCases, setTestCases] = useState([{ input: "", expected: "" }]);
+export default function TestCases({ code, language, setTestCases }) {
+  const [testCases, setLocalTestCases] = useState([]);
 
-  const addTestCase = () => {
-    setTestCases([...testCases, { input: "", expected: "" }]);
-  };
-
-  const runTests = async () => {
-    const response = await axios.post("http://localhost:5000/execute-code", {
-      testCases,
-    });
-    console.log("Test Results:", response.data);
+  const handleGenerateTests = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/code/test", {
+        code,
+        language,
+      });
+      setLocalTestCases(response.data.testCases);
+      setTestCases(response.data.testCases);
+    } catch (error) {
+      console.error("Error generating test cases:", error);
+    }
   };
 
   return (
-    <div className="w-1/4 p-4 bg-gray-100">
-      <h3 className="font-bold">Test Cases</h3>
-      {testCases.map((test, index) => (
-        <div key={index} className="mt-2">
-          <input
-            type="text"
-            placeholder="Input"
-            className="w-full p-2 border"
-            value={test.input}
-            onChange={(e) => {
-              const newCases = [...testCases];
-              newCases[index].input = e.target.value;
-              setTestCases(newCases);
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Expected Output"
-            className="w-full p-2 border mt-1"
-            value={test.expected}
-            onChange={(e) => {
-              const newCases = [...testCases];
-              newCases[index].expected = e.target.value;
-              setTestCases(newCases);
-            }}
-          />
-        </div>
-      ))}
+    <div className="w-full max-w-3xl bg-gray-800 p-5 rounded-lg shadow-lg">
+      {/* <h2 className="text-lg font-semibold mb-2 text-purple-300">Test Cases</h2> */}
       <button
-        className="w-full p-2 mt-2 bg-green-500 text-white"
-        onClick={addTestCase}
+        onClick={handleGenerateTests}
+        className="bg-purple-500 p-2 rounded mt-2"
       >
-        Add Test Case
+        Generate Test Cases
       </button>
-      <button
-        className="w-full p-2 mt-2 bg-blue-500 text-white"
-        onClick={runTests}
-      >
-        Run Tests
-      </button>
+      <div className="mt-4 bg-gray-700 p-3 rounded-lg text-white whitespace-pre-wrap">
+        {testCases.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {testCases.map((test, index) => (
+              <div
+                key={index}
+                className="flex flex-col bg-gray-600 p-3 rounded-lg"
+              >
+                <p className="text-blue-300 font-semibold">Test {index + 1}</p>
+                <div className="bg-gray-700 p-2 rounded-lg">
+                  <p className="text-gray-300">
+                    <strong>Input:</strong> {test.input}
+                  </p>
+                </div>
+                <div className="bg-gray-700 p-2 mt-2 rounded-lg">
+                  <p className="text-green-300">
+                    <strong>Expected Output:</strong> {test.expectedOutput}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400">No test cases generated yet.</p>
+        )}
+      </div>
     </div>
   );
 }
-
-export default TestCases;
