@@ -13,6 +13,7 @@ AI-Powered Developer Productivity Tool
 4. Installation and Setup
 5. Run the Project
 6. API Endpoints
+7. Demo Preview
 
    
 ## Key Features
