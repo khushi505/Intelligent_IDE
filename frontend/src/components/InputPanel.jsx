@@ -62,21 +62,21 @@ export default function InputPanel({
       ></textarea>
 
       {/* Expected Output Input */}
-      <textarea
+      {/* <textarea
         className="w-full p-2 bg-gray-800 text-white border rounded mt-2"
         rows="1"
         placeholder="Expected Output..."
         value={expectedOutput}
         onChange={(e) => setLocalExpectedOutput(e.target.value)}
-      ></textarea>
+      ></textarea> */}
 
       {/* Buttons for Setting Expected Output & Generating Code */}
-      <button
+      {/* <button
         onClick={() => setExpectedOutput(expectedOutput)}
         className="bg-blue-500 p-2 rounded mt-2"
       >
         Set Expected Output
-      </button>
+      </button> */}
 
       <button
         onClick={handleGenerateCode}

@@ -49,7 +49,6 @@ export default function DebuggingPanel({ code }) {
 
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold">Debugged Code</h2>
       <button
         onClick={handleDebugCode}
         className="bg-yellow-500 p-2 rounded mt-2"
