@@ -100,3 +100,6 @@ Backend runs on http://localhost:5000
 | POST   | `/api/code/debug`     | Debugs the provided code.                      |
 | POST   | `/api/code/execute`   | Executes the provided code with testcases.  |
 | POST   | `/api/code/test`      | Tests the provided code with user input.    |
+
+## Demo Preview
+
