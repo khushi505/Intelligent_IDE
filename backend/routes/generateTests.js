@@ -1,21 +1,8 @@
-// const express = require("express");
-// const axios = require("axios");
-// const router = express.Router();
+import express from "express";
+import generateTests from "../controllers/generateTests.js";
 
-// router.post("/", async (req, res) => {
-//   const { code } = req.body;
+const router = express.Router();
 
-//   try {
-//     const response = await axios.post(
-//       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`,
-//       { prompt: `Generate Jest unit tests for this function:\n ${code}` },
-//       { headers: { Authorization: `Bearer ${process.env.GEMINI_API_KEY}` } }
-//     );
+router.post("/test", generateTests);
 
-//     res.json({ testCases: response.data.candidates[0].output });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// module.exports = router;
+export default router;

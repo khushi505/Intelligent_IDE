@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import generateCode from "./routes/generateCode.js";
 import debugCode from "./routes/debugCode.js";
 import executeCode from "./routes/executeCode.js";
-// import generateTests from "./routes/generateTests.js";
+import generateTests from "./routes/generateTests.js";
 // import ocr from "./utils/ocr.js";
 
 dotenv.config();
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use("/api/code", generateCode);
 app.use("/api/code", debugCode);
 app.use("/api/code", executeCode);
-// app.use("/generate-tests", generateTests);
+app.use("/api/code", generateTests);
 // app.use("/upload-image", ocr);
 
 const PORT = process.env.PORT || 5000;
