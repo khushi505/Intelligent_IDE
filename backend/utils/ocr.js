@@ -1,23 +1,53 @@
-// const express = require("express");
-// const multer = require("multer");
-// const Tesseract = require("tesseract.js");
-// const router = express.Router();
+import Tesseract from "tesseract.js";
 
-// // Configure Multer for file upload
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage });
+// Function to extract text from an uploaded image
+export async function extractTextFromImage(imageFile) {
+  try {
+    // Run OCR using Tesseract.js
+    const {
+      data: { text },
+    } = await Tesseract.recognize(
+      imageFile, // Image file
+      "eng", // Language: English
+      {
+        logger: (m) => console.log(m), // Log progress (optional)
+      }
+    );
 
-// router.post("/", upload.single("image"), async (req, res) => {
-//   try {
-//     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    console.log("Extracted Text:", text);
+    return text.trim(); // Return extracted text after trimming
+  } catch (error) {
+    console.error("Error extracting text:", error);
+    return ""; // Return empty string in case of error
+  }
+}
 
-//     const {
-//       data: { text },
-//     } = await Tesseract.recognize(req.file.buffer, "eng");
-//     res.json({ text });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+// Function to send the extracted text to the AI model
+export async function getSolutionFromAI(problemStatement) {
+  try {
+    const response = await fetch("/api/solve", {
+      // Replace with your AI API endpoint
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ problem: problemStatement }),
+    });
 
-// module.exports = router;
+    const data = await response.json();
+    return data.solution; // Return the AI-generated solution
+  } catch (error) {
+    console.error("Error fetching solution:", error);
+    return "Error generating solution";
+  }
+}
+
+// Main function to handle image upload and solution generation
+export async function processImageAndSolve(imageFile) {
+  const problemStatement = await extractTextFromImage(imageFile);
+  if (!problemStatement)
+    return "No text detected. Try again with a clearer image.";
+
+  const solution = await getSolutionFromAI(problemStatement);
+  return solution;
+}
